@@ -6,6 +6,7 @@ function getNoteContent(noteId) {
         console.log("hi");
         console.log(data.content);
         document.getElementById("content").innerHTML = data.content;
+        document.getElementById("title").innerHTML = data.title;
     });
 }
 
@@ -28,6 +29,12 @@ function notesToHtmlTree(notes) {
 
 
 document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById("title").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+        }
+    });
+
     // request the data from the server
     fetch("/api/notes").then(r => r.json()).then(data => {
         noteTree = data;
