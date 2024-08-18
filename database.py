@@ -6,10 +6,12 @@ import config
 
 DEFAULT_NOTES = """
 {
+  "id": 0,
   "type": "notebook",
   "title": "Notes",
   "notes": [
     {
+      "id": 1,
       "type": "note",
       "title": "My First Note",
       "content": "Hello, World!"
@@ -64,9 +66,10 @@ class Database:
                             CREATE TABLE IF NOT EXISTS users (
                                 google_id TEXT PRIMARY KEY NOT NULL,
                                 email TEXT NOT NULL,
-                                notes JSONB NOT NULL
+                                notes_id_counter INT NOT NULL DEFAULT 2,
+                                notes JSONB NOT NULL DEFAULT %s
                             )
-                        """)
+                        """, (DEFAULT_NOTES,))
         
         self.conn.commit()
         cursor.close()
@@ -91,9 +94,9 @@ class Database:
         
         try:
             cursor.execute("""
-                                INSERT INTO users (google_id, email, notes)
-                                VALUES (%s, %s, %s)
-                            """, (google_id, email, DEFAULT_NOTES))
+                                INSERT INTO users (google_id, email)
+                                VALUES (%s, %s)
+                            """, (google_id, email))
         except psycopg2.errors.UniqueViolation:
             raise ValueError(f"User {google_id}, email {email} already exists")
         
