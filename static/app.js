@@ -1,10 +1,11 @@
 let noteTree = null;
+let selectedNote = null;
 
 
-function getNoteContent(noteId) {
+function selectNote(noteId) {
     fetch(`/api/notes/${noteId}`).then(r => r.json()).then(data => {
-        console.log("hi");
-        console.log(data.content);
+        selectedNote = data;
+
         document.getElementById("content").innerHTML = data.content;
         document.getElementById("title").innerHTML = data.title;
     });
@@ -18,13 +19,34 @@ function notesToHtmlTree(notes) {
             html += "<details><summary>" + note.title + "</summary>";
             html += notesToHtmlTree(note);
         } else {
-            html += `<li onclick="getNoteContent(${note.id})">${note.title}</li>`;
+            html += `<li onclick="selectNote(${note.id})">${note.title}</li>`;
         }
     });
 
     html += "</ul>";
 
     return html;
+}
+
+
+function save() {
+    if (selectedNote === null) {
+        return;
+    }
+
+    fetch(`/api/modify-note`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            title: document.getElementById("title").innerHTML,
+            content: document.getElementById("content").innerHTML,
+            id: selectedNote.id
+        })
+    }).then(r => r.json()).then(data => {
+        selectedNote = data;
+    });
 }
 
 

@@ -1,5 +1,5 @@
 import requests
-from flask import Flask, render_template, session, abort, redirect, request, jsonify
+from flask import Flask, render_template, session, abort, redirect, request, jsonify, make_response
 from flask_caching import Cache
 from google.oauth2 import id_token
 from google_auth_oauthlib.flow import Flow
@@ -12,13 +12,13 @@ import os
 
 import database
 import config
-import key
+import flask_secret
 
 db = database.Database()
 
 app = Flask(__name__)
 app.secret_key = config.OAUTH_CLIENT_SECRET["web"]["client_secret"]
-key.read_secret_key(app)
+flask_secret.read_secret_key(app)
 
 cache = Cache(app, config={"CACHE_TYPE": "simple"})
 
@@ -109,6 +109,27 @@ def dashboard():
 @login_required
 def get_notes():
     return jsonify(db.get_notes(session["google_id"]))
+
+
+@app.route("/api/modify-note", methods=["POST"])
+@login_required
+def save_note():
+    data = request.json
+    
+    # todo: use a schema validation library like voluptuous to validate the data
+    validation = {
+        "id": int,
+        "content": str,
+        "title": str
+    }
+    
+    for key, value in validation.items():
+        if key not in data or not isinstance(data[key], value):
+            return abort(400)
+    
+    db.modify_noteobject(session["google_id"], data["id"], data)
+    
+    return make_response("", 204)
 
 
 @app.route("/api/notes/<int:note_id>")
