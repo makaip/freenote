@@ -58,7 +58,7 @@ def login_required(function):
 def login():
     # If the user is already logged in, redirect them to the dashboard
     if "google_id" in session:
-        return redirect("/dashboard")
+        return redirect("/app")
     
     authorization_url, state = flow.authorization_url()
     session["state"] = state
