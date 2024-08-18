@@ -108,8 +108,6 @@ def dashboard():
 @app.route("/api/notes")
 @login_required
 def get_notes():
-    print(db.get_notes(session["google_id"]))
-    
     return jsonify(db.get_notes(session["google_id"]))
 
 
