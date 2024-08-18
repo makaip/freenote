@@ -111,6 +111,12 @@ def get_notes():
     return jsonify(db.get_notes(session["google_id"]))
 
 
+@app.route("/api/notes/<int:note_id>")
+@login_required
+def get_note(note_id):
+    return jsonify(db.get_note_by_id(session["google_id"], note_id))
+
+
 @app.route("/")
 def index():
     return render_template("index.html")

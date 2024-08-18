@@ -106,7 +106,7 @@ class Database:
         self.conn.commit()
         cursor.close()
     
-    def get_notes(self, google_id):
+    def get_note_by_id(self, google_id, note_id):
         cursor = self.conn.cursor()
         
         cursor.execute("""
@@ -118,6 +118,30 @@ class Database:
         notes = cursor.fetchone()[0]
         
         cursor.close()
+        
+        return self._traverse_notes(notes, note_id)
+    
+    def get_notes(self, google_id):
+        cursor = self.conn.cursor()
+        
+        cursor.execute("""
+                            SELECT notes
+                            FROM users
+                            WHERE google_id = %s
+                        """, (google_id,))
+        
+        notes = cursor.fetchone()[0]
+        cursor.close()
+        
+        # Delete notes content before sending them to the client to limit the amount of data sent
+        def delete_content(note):
+            if note["type"] == "note":
+                del note["content"]
+            else:
+                for n in note["notes"]:
+                    delete_content(n)
+        
+        delete_content(notes)
         
         return notes
     

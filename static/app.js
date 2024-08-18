@@ -1,3 +1,11 @@
+let noteTree = null;
+
+
+function getNoteContent(noteId) {
+    fetch(`/api/notes/${noteId}`).then(r => r.json()).then(data => {
+        document.getElementById("note").innerHTML = data.content;
+    });
+}
 
 function notesToHtmlTree(notes) {
     let html = "<ul>";
@@ -7,7 +15,7 @@ function notesToHtmlTree(notes) {
             html += "<details><summary>" + note.title + "</summary>";
             html += notesToHtmlTree(note);
         } else {
-            html += `<li>${note.title}</li>`;
+            html += `<li onclick="getNoteContent(${note.id})">${note.title}</li>`;
         }
     });
 
@@ -18,10 +26,9 @@ function notesToHtmlTree(notes) {
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("App loaded");
-
     // request the data from the server
     fetch("/api/notes").then(r => r.json()).then(data => {
+        noteTree = data;
         document.getElementById("notes").innerHTML = notesToHtmlTree({notes: [data]});
     });
 });
