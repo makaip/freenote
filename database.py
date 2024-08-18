@@ -1,3 +1,6 @@
+import collections
+import json
+
 import psycopg2
 from psycopg2 import sql
 
@@ -117,4 +120,56 @@ class Database:
         cursor.close()
         
         return notes
+    
+    @staticmethod
+    def _traverse_notes(notes, find_id):
+        # employ a stack to non-recursively traverse the notes
+        stack = collections.deque()
+        stack.append(notes)
+        
+        while stack:
+            current = stack.pop()
+            
+            if current["id"] == find_id:
+                return current
+            
+            if current["type"] == "notebook":
+                for note in current["notes"]:
+                    stack.append(note)
+        
+        return None
+    
+    def modify_noteobject(self, google_id, note_id, new_note_data):
+        cursor = self.conn.cursor()
+        
+        # get the notes, traverse them until we find the note with the given id
+        # and replace it with the new note
+        
+        cursor.execute("""
+                SELECT notes
+                FROM users
+                WHERE google_id = %s
+            """, (google_id,))
+        
+        notes = cursor.fetchone()[0]
+        
+        note = self._traverse_notes(notes, note_id)
+        
+        if note is None:
+            raise ValueError(f"Note with id {note_id} not found")
+        
+        if note["type"] == "note" and "content" in new_note_data:
+            note["content"] = new_note_data["content"]
+        
+        if "title" in new_note_data:
+            note["title"] = new_note_data["title"]
+        
+        cursor.execute("""
+                UPDATE users
+                SET notes = %s
+                WHERE google_id = %s
+            """, (json.dumps(notes), google_id))
+        
+        self.conn.commit()
+        cursor.close()
     
