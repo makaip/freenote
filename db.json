@@ -1,0 +1,11 @@
+{
+  "type": "notebook",
+  "title": "Notes",
+  "notes": [
+    {
+      "type": "note",
+      "title": "My First Note",
+      "content": "Hello, World!"
+    }
+  ]
+}
