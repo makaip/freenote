@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Freenote</title>
+
+    <link rel="stylesheet" type="text/css" href="../static/app.css">
 </head>
 <body>
     <div id="notes">
@@ -20,8 +22,7 @@
         </ul>
     </div>
     <div id="writing-area">
-        <label for="note"></label>  {# Put this here so PyCharm doesn't complain #}
-        <textarea id="note" rows="10" cols="50"></textarea>
+        <div id="content" contenteditable="true"></div>
     </div>
 
     <script src="../static/app.js"></script>

@@ -3,7 +3,9 @@ let noteTree = null;
 
 function getNoteContent(noteId) {
     fetch(`/api/notes/${noteId}`).then(r => r.json()).then(data => {
-        document.getElementById("note").innerHTML = data.content;
+        console.log("hi");
+        console.log(data.content);
+        document.getElementById("content").innerHTML = data.content;
     });
 }
 
