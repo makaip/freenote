@@ -52,8 +52,12 @@ function save() {
             content: document.getElementById("content").innerHTML,
             id: selectedNote.id
         })
-    }).then(r => r.json()).then(data => {
-
+    }).then(response => {
+        if (response.ok) {
+            console.log("Note saved");
+        } else {
+            console.error("Failed to save note");
+        }
     });
 }
 
