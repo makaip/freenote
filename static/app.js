@@ -3,6 +3,10 @@ let selectedNote = null;
 
 
 function selectNote(noteId) {
+    if (selectedNote !== null) {
+        save();
+    }
+
     fetch(`/api/notes/${noteId}`).then(r => r.json()).then(data => {
         selectedNote = data;
 
@@ -45,7 +49,7 @@ function save() {
             id: selectedNote.id
         })
     }).then(r => r.json()).then(data => {
-        selectedNote = data;
+
     });
 }
 
