@@ -3,6 +3,10 @@ let selectedNote = null;
 
 
 function selectNote(noteId) {
+    if (noteId === selectedNote) {
+        return;
+    }
+
     if (selectedNote !== null) {
         save();
     }
