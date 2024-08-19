@@ -78,6 +78,10 @@ function save() {
         return;
     }
 
+    if (selectedNoteContentLastSave === document.getElementById("content").innerHTML) {
+        return;
+    }
+
     fetch(`/api/modify-note`, {
         method: "POST",
         headers: {
