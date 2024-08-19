@@ -1,5 +1,27 @@
 let noteTree = null;
 let selectedNote = null;
+let selectedNoteContentLastSave = null;
+
+
+function traverseNoteTree(noteId) {
+    let stack = [noteTree];
+
+    while (stack.length > 0) {
+        let current = stack.pop();
+
+        if (current.id === noteId) {
+            return current;
+        }
+
+        if (current.type === "notebook") {
+            current.notes.forEach(note => {
+                stack.push(note);
+            });
+        }
+    }
+
+    return null;
+}
 
 
 function selectNote(noteId) {
@@ -14,10 +36,24 @@ function selectNote(noteId) {
     fetch(`/api/notes/${noteId}`).then(r => r.json()).then(data => {
         selectedNote = data;
 
+        selectedNoteContentLastSave = data.content;
         document.getElementById("content").innerHTML = data.content;
         document.getElementById("title").innerHTML = data.title;
     });
 }
+
+
+function onTitleUpdate() {
+    if (selectedNote === null) {
+        return;
+    }
+
+    // change the title of the note in noteTree, then update the tree html
+    let note = traverseNoteTree(selectedNote.id);
+    note.title = document.getElementById("title").innerHTML;
+    document.getElementById("notes").innerHTML = notesToHtmlTree({notes: [noteTree]});
+}
+
 
 function notesToHtmlTree(notes) {
     let html = "<ul>";
@@ -68,6 +104,8 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
         }
     });
+
+    document.getElementById("title").addEventListener("input", onTitleUpdate);
 
     // request the data from the server
     fetch("/api/notes").then(r => r.json()).then(data => {
