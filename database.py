@@ -61,6 +61,27 @@ class Database:
         cursor.close()
         conn.close()
     
+    def _read_and_increment_id_counter(self, google_id) -> int:
+        cursor = self.conn.cursor()
+        
+        cursor.execute("""
+                            SELECT notes_id_counter
+                            FROM users
+                            WHERE google_id = %s
+                        """, (google_id,))
+        
+        id_counter = cursor.fetchone()[0]
+        
+        cursor.execute("""
+                UPDATE users
+                SET notes_id_counter = notes_id_counter + 1
+                WHERE google_id = %s
+            """, (google_id,))
+        
+        cursor.close()
+        
+        return id_counter
+    
     def create_table_if_not_exists(self):
         cursor = self.conn.cursor()
         
@@ -101,6 +122,7 @@ class Database:
                                 VALUES (%s, %s)
                             """, (google_id, email))
         except psycopg2.errors.UniqueViolation:
+            cursor.close()
             raise ValueError(f"User {google_id}, email {email} already exists")
         
         self.conn.commit()
@@ -121,7 +143,14 @@ class Database:
         
         return self._traverse_notes(notes, note_id)
     
-    def get_notes(self, google_id):
+    def get_total_notes(self, google_id) -> dict:
+        """
+        Gets the full notes object, including the content of the notes
+        
+        :param google_id: The Google id of the user
+        :return: The notes object
+        """
+        
         cursor = self.conn.cursor()
         
         cursor.execute("""
@@ -131,13 +160,23 @@ class Database:
                         """, (google_id,))
         
         notes = cursor.fetchone()[0]
+        
         cursor.close()
+        
+        return notes
+    
+    def get_notes_no_content(self, google_id):
+        notes = self.get_total_notes(google_id)
         
         # Delete notes content before sending them to the client to limit the amount of data sent
         def delete_content(note):
+            print(note)
+            
             if note["type"] == "note":
+                print("deleting content")
                 del note["content"]
             else:
+                print("deleting more")
                 for n in note["notes"]:
                     delete_content(n)
         
@@ -180,6 +219,7 @@ class Database:
         note = self._traverse_notes(notes, note_id)
         
         if note is None:
+            cursor.close()
             raise ValueError(f"Note with id {note_id} not found")
         
         if note["type"] == "note" and "content" in new_note_data:
@@ -196,4 +236,45 @@ class Database:
         
         self.conn.commit()
         cursor.close()
+    
+    def add_noteobject(self, google_id: str, parent: int, note_type: str) -> int:
+        """
+        Adds a new noteobject under the note with the given under_id.
+        :param google_id: The Google id of the user
+        :param parent: The id of the notebook under which to add the new noteobject
+        :param note_type: The type of the note to add. Can be either "note" or "notebook
+        :return: The id of the newly added noteobject
+        """
+        
+        full_notes = self.get_total_notes(google_id)
+        parent_notebook = self._traverse_notes(full_notes, parent)
+        
+        if parent_notebook is None or parent_notebook["type"] != "notebook":
+            raise ValueError(f"Notebook with id {parent} not found")
+        
+        new_note = {
+            "id": self._read_and_increment_id_counter(google_id),
+            "type": note_type,
+            "title": f"New Note{'book' if note_type == 'notebook' else ''}",
+        }
+        
+        if note_type == "note":
+            new_note["content"] = ""
+        else:
+            new_note["notes"] = []
+        
+        parent_notebook["notes"].append(new_note)
+        
+        cursor = self.conn.cursor()
+        
+        cursor.execute("""
+                UPDATE users
+                SET notes = %s
+                WHERE google_id = %s
+            """, (json.dumps(full_notes), google_id))
+        
+        self.conn.commit()
+        cursor.close()
+        
+        return new_note["id"]
     

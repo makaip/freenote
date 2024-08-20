@@ -55,12 +55,35 @@ function onTitleUpdate() {
 }
 
 
+function newNote(id) {
+    console.log("calling new note");
+
+    fetch("api/new-noteobject", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            parent: id,
+            type: "note"
+        })
+    }).then(response => {
+        if (!response.ok) {
+            console.log("Failed to create new note");
+        } else {
+            console.log("updating tree");
+            updateTree();
+        }
+    });
+}
+
+
 function notesToHtmlTree(notes) {
     let html = "<ul>";
 
     notes["notes"].forEach(note => {
         if (note.type === "notebook") {
-            html += "<details><summary>" + note.title + "</summary>";
+            html += `<details><summary>${note.title} <span onclick="newNote(${note.id})">New Note</span></summary>`;
             html += notesToHtmlTree(note);
         } else {
             html += `<li onclick="selectNote(${note.id})">${note.title}</li>`;
@@ -102,6 +125,14 @@ function save() {
 }
 
 
+function updateTree() {
+    fetch("/api/notes").then(r => r.json()).then(data => {
+        noteTree = data;
+        document.getElementById("notes").innerHTML = notesToHtmlTree({notes: [data]});
+    });
+}
+
+
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById("title").addEventListener("keydown", (e) => {
         if (e.key === "Enter") {
@@ -111,9 +142,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById("title").addEventListener("input", onTitleUpdate);
 
-    // request the data from the server
-    fetch("/api/notes").then(r => r.json()).then(data => {
-        noteTree = data;
-        document.getElementById("notes").innerHTML = notesToHtmlTree({notes: [data]});
-    });
+    updateTree();
 });

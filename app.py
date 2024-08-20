@@ -108,7 +108,7 @@ def dashboard():
 @app.route("/api/notes")
 @login_required
 def get_notes():
-    return jsonify(db.get_notes(session["google_id"]))
+    return jsonify(db.get_notes_no_content(session["google_id"]))
 
 
 @app.route("/api/modify-note", methods=["POST"])
@@ -136,6 +136,28 @@ def save_note():
 @login_required
 def get_note(note_id):
     return jsonify(db.get_note_by_id(session["google_id"], note_id))
+
+
+@app.route("/api/new-noteobject", methods=["POST"])
+@login_required
+def new_note():
+    data = request.json
+    
+    validation = {
+        "parent": int,
+        "type": str
+    }
+    
+    for key, value in validation.items():
+        if key not in data or not isinstance(data[key], value):
+            return abort(400)
+    
+    if data["type"] not in ["note", "notebook"]:
+        return abort(400)
+    
+    db.add_noteobject(session["google_id"], data["parent"], data["type"])
+    
+    return make_response("", 204)
 
 
 @app.route("/")
