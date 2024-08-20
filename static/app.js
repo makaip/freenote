@@ -55,9 +55,7 @@ function onTitleUpdate() {
 }
 
 
-function newNote(id) {
-    console.log("calling new note");
-
+function newNoteObject(id, type) {
     fetch("api/new-noteobject", {
         method: "POST",
         headers: {
@@ -65,13 +63,31 @@ function newNote(id) {
         },
         body: JSON.stringify({
             parent: id,
-            type: "note"
+            type: type
         })
     }).then(response => {
         if (!response.ok) {
             console.log("Failed to create new note");
         } else {
-            console.log("updating tree");
+            updateTree();
+        }
+    });
+}
+
+
+function deleteNoteobject(id) {
+    fetch("api/delete-noteobject", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            id: id
+        })
+    }).then(response => {
+        if (!response.ok) {
+            console.log("Failed to delete note");
+        } else {
             updateTree();
         }
     });
@@ -83,10 +99,15 @@ function notesToHtmlTree(notes) {
 
     notes["notes"].forEach(note => {
         if (note.type === "notebook") {
-            html += `<details><summary>${note.title} <span onclick="newNote(${note.id})">New Note</span></summary>`;
+            html += `<details><summary>${note.title} <span onclick="newNoteObject(${note.id}, 'note')">New Note</span> <span onclick="newNoteObject(${note.id}, 'notebook')">New Notebook</span>`;
+
+            if (note.id !== 0) {  // root notebook, do not delete
+                html += ` <span onclick="deleteNoteobject(${note.id})">Delete</span>`;
+            }
+
             html += notesToHtmlTree(note);
         } else {
-            html += `<li onclick="selectNote(${note.id})">${note.title}</li>`;
+            html += `<li onclick="selectNote(${note.id})">${note.title} <span onclick="deleteNoteobject(${note.id})">Delete</span></li>`;
         }
     });
 

@@ -140,7 +140,7 @@ def get_note(note_id):
 
 @app.route("/api/new-noteobject", methods=["POST"])
 @login_required
-def new_note():
+def new_noteobject():
     data = request.json
     
     validation = {
@@ -156,6 +156,23 @@ def new_note():
         return abort(400)
     
     db.add_noteobject(session["google_id"], data["parent"], data["type"])
+    
+    return make_response("", 204)
+
+
+@app.route("/api/delete-noteobject", methods=["POST"])
+def delete_noteobject():
+    data = request.json
+    
+    validation = {
+        "id": int
+    }
+    
+    for key, value in validation.items():
+        if key not in data or not isinstance(data[key], value):
+            return abort(400)
+    
+    db.delete_noteobject(session["google_id"], data["id"])
     
     return make_response("", 204)
 

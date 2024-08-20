@@ -274,3 +274,37 @@ class Database:
         
         return new_note["id"]
     
+    def delete_noteobject(self, google_id: str, note_id: int) -> None:
+        """
+        Deletes a note object and all if its children (if it's a notebook).
+        :param google_id: The Google id of the user
+        :param note_id: The id of the note to delete
+        """
+        
+        full_notes = self.get_total_notes(google_id)
+        
+        # use a stack to non-recursively traverse the notes
+        stack = collections.deque()
+        stack.append(full_notes)
+        
+        while stack:
+            current = stack.pop()
+            
+            if current["type"] == "notebook":
+                for note in current["notes"]:
+                    if note["id"] == note_id:
+                        current["notes"].remove(note)
+                        break
+                    stack.append(note)
+        
+        cursor = self.conn.cursor()
+        
+        cursor.execute("""
+                UPDATE users
+                SET notes = %s
+                WHERE google_id = %s
+            """, (json.dumps(full_notes), google_id))
+        
+        self.conn.commit()
+        cursor.close()
+    
