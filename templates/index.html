@@ -1,11 +1,41 @@
+<!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>Freenote: a free and open source cloud-based notetaking platform</title>
-    </head>
-    <body>
-        <h1>Freenote</h1>
-        <p>Welcome to Freenote, a free and open source cloud-based notetaking platform</p>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Freenote</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <h1>freenote</h1>
+        </div>
+        <div class="auth-buttons">
+            <a href="/login"><button class="login">Log In</button></a>
+            <a href="/login"><button class="signup">Sign Up</button></a>
+        </div>
+    </header>
 
-        <a href="/login">Login</a>
-    </body>
+    <main>
+        <section class="intro">
+            <h2>Welcome to Freenote.</h2>
+            <p>A free and open source cloud-based notetaking platform.</p>
+        </section>
+        <section class="features">
+            <div class="feature">
+                <h3>Open Source</h3>
+                <p>pooptastic asdkljfhsekj kjhf kjhe fjhkejfhk jekjfh ekjh ekfj kf je fkef kjef kf e</p>
+            </div>
+            <div class="feature">
+                <h3>Free Forever</h3>
+                <p>booty fard asdkljfhsekj kjhf kjhe fjhkejfhk jekjfh ekjh ekfj kf je fkef kjef kf e</p>
+            </div>
+            <div class="feature">
+                <h3>Open Source</h3>
+                <p>pooptastic asdkljfhsekj kjhf kjhe fjhkejfhk jekjfh ekjh ekfj kf je fkef kjef kf e</p>
+            </div>
+        </section>
+    </main>
+</body>
 </html>
