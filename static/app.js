@@ -105,6 +105,8 @@ function notesToHtmlTree(notes) {
                 html += ` <span onclick="deleteNoteobject(${note.id})">Delete</span>`;
             }
 
+            html += `</summary>`;
+
             html += notesToHtmlTree(note);
         } else {
             html += `<li onclick="selectNote(${note.id})">${note.title} <span onclick="deleteNoteobject(${note.id})">Delete</span></li>`;
