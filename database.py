@@ -170,13 +170,9 @@ class Database:
         
         # Delete notes content before sending them to the client to limit the amount of data sent
         def delete_content(note):
-            print(note)
-            
             if note["type"] == "note":
-                print("deleting content")
                 del note["content"]
             else:
-                print("deleting more")
                 for n in note["notes"]:
                     delete_content(n)
         
