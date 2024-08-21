@@ -1,6 +1,7 @@
 let noteTree = null;
 let selectedNote = null;
 let selectedNoteContentLastSave = null;
+let selectedNoteTitleLastSave = null;
 let openNotebooks = new Set();
 
 
@@ -31,6 +32,7 @@ function selectNote(noteId) {
     if (noteId === null || noteId === undefined) {
         selectedNote = null;
         selectedNoteContentLastSave = null;
+        selectedNoteTitleLastSave = null;
         document.getElementById("content").innerHTML = "";
         document.getElementById("title").innerHTML = "";
         return;
@@ -54,6 +56,8 @@ function selectNote(noteId) {
         selectedNote = data;
 
         selectedNoteContentLastSave = data.content;
+        selectedNoteTitleLastSave = data.title;
+
         document.getElementById("content").innerHTML = data.content;
         document.getElementById("title").innerHTML = data.title;
     });
@@ -182,9 +186,12 @@ function save() {
         return;
     }
 
-    if (selectedNoteContentLastSave === document.getElementById("content").innerHTML) {
+    if (selectedNoteContentLastSave === document.getElementById("content").innerHTML && selectedNoteTitleLastSave === document.getElementById("title").innerHTML) {
         return;
     }
+
+    let autosaveText = document.getElementById("autosave-notif");
+    autosaveText.innerHTML = "Saving...";
 
     fetch(`/api/modify-note`, {
         method: "POST",
@@ -198,10 +205,17 @@ function save() {
         })
     }).then(response => {
         if (response.ok) {
-            console.log("Note saved");
+            selectedNoteContentLastSave = document.getElementById("content").innerHTML;
+            selectedNoteTitleLastSave = document.getElementById("title").innerHTML;
+            autosaveText.innerHTML = "Saved!";
         } else {
-            console.error("Failed to save note");
+            console.log("Failed to save note. Response: ", response);
+            autosaveText.innerHTML = "Failed to save note";
         }
+
+        setTimeout(() => {
+            autosaveText.innerHTML = "";
+        }, 2000);
     });
 }
 
@@ -222,6 +236,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.getElementById("title").addEventListener("input", onTitleUpdate);
+
+    // autosave
+    setInterval(save, 5000);
 
     updateTree();
 });
