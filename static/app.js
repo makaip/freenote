@@ -1,6 +1,7 @@
 let noteTree = null;
 let selectedNote = null;
 let selectedNoteContentLastSave = null;
+let openNotebooks = new Set();
 
 
 function traverseNoteTree(noteId) {
@@ -71,7 +72,34 @@ function onTitleUpdate() {
 }
 
 
+/**
+ * Makes the notebook with the given id open, and all parent notebooks open. Used to open a notebook when adding a new
+ * note or notebook to it.
+ *
+ * @param id {number} The id of the notebook to open
+ */
+function openNotebook(id) {
+    let notebook = document.getElementById(`noteobject-${id}`);
+    if (notebook === null) {
+        return;
+    }
+
+    notebook.open = true;
+    openNotebooks.add(id);
+
+    let parent = notebook.parentNode;
+    while (parent !== null && parent.tagName === "DETAILS") {
+        parent.open = true;
+        parent = parent.parentNode;
+        openNotebooks.add(parseInt(parent.id.split("-")[1]));
+    }
+}
+
+
 function newNoteObject(id, type) {
+    // Make the notebook open
+    openNotebook(id);
+
     fetch("api/new-noteobject", {
         method: "POST",
         headers: {
@@ -82,6 +110,7 @@ function newNoteObject(id, type) {
             type: type
         })
     }).then(response => {
+        openNotebook(id);  // sometimes the openNotebook function in the beginning is too early, so call it again
         if (!response.ok) {
             console.log("Failed to create new note");
         } else {
@@ -114,12 +143,21 @@ function deleteNoteobject(id) {
 }
 
 
+function toggleExpandedNotebook(id) {
+    if (openNotebooks.has(id)) {
+        openNotebooks.delete(id);
+    } else {
+        openNotebooks.add(id);
+    }
+}
+
+
 function notesToHtmlTree(notes) {
     let html = "<ul>";
 
     notes["notes"].forEach(note => {
         if (note.type === "notebook") {
-            html += `<details><summary>${note.title} <span onclick="newNoteObject(${note.id}, 'note')">New Note</span> <span onclick="newNoteObject(${note.id}, 'notebook')">New Notebook</span>`;
+            html += `<details ${openNotebooks.has(note.id) ? "open" : ""} id="noteobject-${note.id}"><summary onclick="toggleExpandedNotebook(${note.id})">${note.title} <span onclick="newNoteObject(${note.id}, 'note')">New Note</span> <span onclick="newNoteObject(${note.id}, 'notebook')">New Notebook</span>`;
 
             if (note.id !== 0) {  // root notebook, do not delete
                 html += ` <span onclick="deleteNoteobject(${note.id})">Delete</span>`;
