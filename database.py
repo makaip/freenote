@@ -12,12 +12,14 @@ DEFAULT_NOTES = """
   "id": 0,
   "type": "notebook",
   "title": "Notes",
+  "creation_time": 0,
   "notes": [
     {
       "id": 1,
       "type": "note",
       "title": "My First Note",
-      "content": "Hello, World!"
+      "content": "Hello, World!",
+      "creation_time": 0
     }
   ]
 }

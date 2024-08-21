@@ -25,6 +25,16 @@ function traverseNoteTree(noteId) {
 
 
 function selectNote(noteId) {
+    console.log(noteId, noteId === null, noteId === undefined);
+
+    if (noteId === null || noteId === undefined) {
+        selectedNote = null;
+        selectedNoteContentLastSave = null;
+        document.getElementById("content").innerHTML = "";
+        document.getElementById("title").innerHTML = "";
+        return;
+    }
+
     if (noteId === selectedNote) {
         return;
     }
@@ -34,6 +44,12 @@ function selectNote(noteId) {
     }
 
     fetch(`/api/notes/${noteId}`).then(r => r.json()).then(data => {
+        if (data === null) {
+            // note doesn't exist
+            selectNote(null);
+            return;
+        }
+
         selectedNote = data;
 
         selectedNoteContentLastSave = data.content;
@@ -89,6 +105,10 @@ function deleteNoteobject(id) {
             console.log("Failed to delete note");
         } else {
             updateTree();
+
+            if (selectedNote !== null && traverseNoteTree(selectedNote.id) === null) {
+                selectNote(null);
+            }
         }
     });
 }
