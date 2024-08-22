@@ -1,19 +1,141 @@
+/* General Page Styling */
+body, html {
+    font-family: Arial, sans-serif;
+    background-color: #ffffff;
+    color: #333;
+}
 
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: -20px;
+}
 
+/* Main container to hold notes and writing area side by side */
+#container {
+    display: flex;
+    width: 80vw;
+    padding: 20px;
+    margin-top: 20px;
+    margin: auto;
+}
+
+/* Notes Section Styling */
+#notes {
+    width: 20vw;
+    margin-right: 100px;
+}
+
+#notes ul {
+    list-style-type: none;
+    padding: 0px;
+}
+
+#notes li {
+    margin: 5px 0px;
+}
+
+/* Writing Area Styling */
+#writing-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 60vw;
+}
+
+/* Title and Content Styling */
 #title {
     font-size: 24px;
     color: #333;
-    text-align: center;
     margin-top: 20px;
-    width: 200px;
-    background-color: #f0f0f0;
-    border: 1px solid rgba(12, 34, 43, 0.55);
+    width: 100%;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid rgba(12, 34, 43, 0.2);
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 #content {
-    margin-top: 50px;
-    width: 200px;
-    height: 200px;
+    margin-top: 20px;
+    width: 100%;
+    height: 400px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid rgba(12, 34, 43, 0.2);
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Button Styling */
+button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+button.sec {
+    background-color: #7b8996;
+}
+
+/* Notification Styling */
+#autosave-notif {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #28a745;
+}
+
+#noteslist {
+    margin-top: 20px;
+}
+
+#noteslist li {
+    font-size: 18px;
+    padding: 10px;
+    border-top: 1px solid rgba(12, 34, 43, 0.2);
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+#noteslist li:hover {
     background-color: #f0f0f0;
-    border: 1px solid rgba(12, 34, 43, 0.55);
+}
+
+#noteslist li .listtitle {
+    font-weight: bold;
+    margin-right: 20px;
+}
+
+.delete {
+    background-color: red;
+    border-radius: 100%;
+    width: 15px;
+    height: 15px;
+    font-size: 10px;
+    padding: 0px;
+    float: right;
+    margin-top: 0px;
+    font-weight: bold;
+}
+
+.delete:hover {
+    background-color: darkred;
+}
+
+/* Hide note contents by default */
+.note-contents {
+    display: none;
+    padding-left: 20px;
+    margin-left: 20px;
 }

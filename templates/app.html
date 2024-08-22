@@ -3,33 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <title>Freenote</title>
-
     <link rel="stylesheet" type="text/css" href="../static/app.css">
 </head>
+
 <body>
-    <div id="notes">
-        <ul>
-            <li>
-                <details>
-                    <summary>Notes</summary>
-                    <ul>
-                        <li>Note1</li>
-                        <li>Note2</li>
-                        <li>Note3</li>
+    <header>
+        <h1>freenote</h1>
+        <div>
+            <button id="logout" class="sec">Account</button>
+            <button id="logout">Logout</button>
+        </div>
+    </header>
+    <div id="container">
+        <div id="notes">
+            <ul>
+                <li>
+                    <h2>Your Notes</h2>
+                    <button id="addnotebook" style="float: right; margin-top: -53px;">New</button>
+                    <ul id="noteslist">
+                        <li class="notebook" data-toggle="Notebook">
+                            <span class="listtitle">Notebook</span>
+                            <button class="delete">x</button>
+                        </li>
+                        <ul class="note-contents" data-notebook="Notebook">
+                            <li><span class="listtitle">Note1</span><span class="listtext">text goes here</span><button class="delete">x</button></li>
+                            <li><span class="listtitle">Note2</span><span class="listtext">text goes here</span><button class="delete">x</button></li>
+                            <li><span class="listtitle">Note3</span><span class="listtext">text goes here</span><button class="delete">x</button></li>
+                        </ul>
+                        <li><span class="listtitle">Note1</span><span class="listtext">text goes here</span><button class="delete">x</button></li>
+                        <li><span class="listtitle">Note2</span><span class="listtext">text goes here</span><button class="delete">x</button></li>
                     </ul>
-                </details>
-            </li>
-        </ul>
+                </li>
+            </ul>
+        </div>
+        <div id="writing-area">
+            <div id="title" contenteditable="true"></div>
+            <div id="content" contenteditable="true"></div>
+            <div id="autosave-notif"></div>
+        </div>
     </div>
-    <div id="writing-area">
-        <div id="title" contenteditable="true"></div>
-        <div id="content" contenteditable="true"></div>
-    </div>
-
-    <button onclick="save()">Save</button>
-
-    <div id="autosave-notif"></div>
-
     <script src="../static/app.js"></script>
 </body>
 </html>

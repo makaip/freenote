@@ -242,3 +242,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     updateTree();
 });
+
+
+document.addEventListener("DOMContentLoaded", function() {
+    const notebooks = document.querySelectorAll('.notebook');
+
+    notebooks.forEach(notebook => {
+        notebook.addEventListener('click', function() {
+            const notebookName = this.getAttribute('data-toggle');
+            const notes = document.querySelector(`.note-contents[data-notebook="${notebookName}"]`);
+            if (notes.style.display === "none" || notes.style.display === "") {
+                notes.style.display = "block";
+            } else {
+                notes.style.display = "none";
+            }
+        });
+    });
+});
