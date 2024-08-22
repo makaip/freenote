@@ -10,6 +10,7 @@ header {
     justify-content: space-between;
     align-items: center;
     margin-top: -20px;
+    margin-bottom: 40px;
 }
 
 /* Main container to hold notes and writing area side by side */
@@ -118,7 +119,8 @@ button.sec {
 }
 
 .delete {
-    background-color: red;
+    background-color: #ffffff;
+    color: #333;
     border-radius: 100%;
     width: 15px;
     height: 15px;
@@ -129,8 +131,14 @@ button.sec {
     font-weight: bold;
 }
 
+.noteslist li:hover .delete {
+    background-color: #333;
+    color: #f9f9f9;
+}
+
 .delete:hover {
     background-color: darkred;
+    color:#f9f9f9;
 }
 
 /* Hide note contents by default */
@@ -139,3 +147,4 @@ button.sec {
     padding-left: 20px;
     margin-left: 20px;
 }
+

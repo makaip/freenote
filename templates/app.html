@@ -22,16 +22,28 @@
                     <button id="addnotebook" style="float: right; margin-top: -53px;">New</button>
                     <ul id="noteslist">
                         <li class="notebook" data-toggle="Notebook">
-                            <span class="listtitle">Notebook</span>
+                            <span class="listtitle">Intro to Freenote</span>
                             <button class="delete">x</button>
                         </li>
                         <ul class="note-contents" data-notebook="Notebook">
-                            <li><span class="listtitle">Note1</span><span class="listtext">text goes here</span><button class="delete">x</button></li>
-                            <li><span class="listtitle">Note2</span><span class="listtext">text goes here</span><button class="delete">x</button></li>
-                            <li><span class="listtitle">Note3</span><span class="listtext">text goes here</span><button class="delete">x</button></li>
+                            <li><span class="listtitle">Basic Usage</span><span class="listtext">You c...</span><button class="delete">x</button></li>
+                            <li><span class="listtitle">Formatting</span><span class="listtext">Use th...</span><button class="delete">x</button></li>
+                            <li><span class="listtitle">Advanced</span><span class="listtext">Click on...</span><button class="delete">x</button></li>
+                            <li class="notebook" data-toggle="Notebook1">
+                                <span class="listtitle">Boring Stuff</span>
+                                <button class="delete">x</button>
+                            </li>
+                            <ul class="note-contents" data-notebook="Notebook1">
+                                <li><span class="listtitle">Credits</span><span class="listtext">Made by...</span><button
+                                        class="delete">x</button></li>
+                                <li><span class="listtitle">Lisence</span><span class="listtext">GNU PU...</span><button
+                                        class="delete">x</button></li>
+                                <li><span class="listtitle">About</span><span class="listtext">We are a ...</span><button
+                                        class="delete">x</button></li>
+                            </ul>
                         </ul>
-                        <li><span class="listtitle">Note1</span><span class="listtext">text goes here</span><button class="delete">x</button></li>
-                        <li><span class="listtitle">Note2</span><span class="listtext">text goes here</span><button class="delete">x</button></li>
+                        <li><span class="listtitle">Intro</span><span class="listtext">Hey there, and w...</span><button class="delete">x</button></li>
+                        <li><span class="listtitle">Test</span><span class="listtext">text goes here</span><button class="delete">x</button></li>
                     </ul>
                 </li>
             </ul>
@@ -43,5 +55,22 @@
         </div>
     </div>
     <script src="../static/app.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+        const notebooks = document.querySelectorAll('.notebook');
+
+        notebooks.forEach(notebook => {
+            notebook.addEventListener('click', function() {
+                const notebookName = this.getAttribute('data-toggle');
+                const notes = document.querySelector(`.note-contents[data-notebook="${notebookName}"]`);
+                if (notes.style.display === "none" || notes.style.display === "") {
+                    notes.style.display = "block";
+                } else {
+                    notes.style.display = "none";
+                }
+            });
+        });
+    });
+    </script>
 </body>
 </html>
