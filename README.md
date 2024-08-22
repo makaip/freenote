@@ -2,7 +2,7 @@
 An in-development free and open source cloud-based notetaking app 
 
 - [x] Create a basic UI with functional backend
-- [ ] Better notetaking UI with CSS styling
+- [x] Better notetaking UI with CSS styling
 - [ ] Better README with setup instructions
 - [ ] Take the diff of the notes instead of the whole note to save amount of data going over the network
 - [ ] Add basic note formatting
